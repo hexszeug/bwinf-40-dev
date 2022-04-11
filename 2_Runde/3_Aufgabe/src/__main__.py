@@ -1,6 +1,5 @@
 import argparse
 from os import get_terminal_size
-import ssn_drawer
 import solution
 import way
 import ssn_drawer
