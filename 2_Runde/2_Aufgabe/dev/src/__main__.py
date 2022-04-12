@@ -7,14 +7,28 @@ from statistics import median as _median
 class DivisionResultNotInteger(Exception): ...
 
 class NoFractionInt(int):
+    def __add__(self, __x: int) -> int:
+        return NoFractionInt(super().__add__(__x))
+    def __radd__(self, __x: int) -> int:
+        return NoFractionInt(super().__radd__(__x))
+
+    def __sub__(self, __x: int) -> int:
+        return NoFractionInt(super().__sub__(__x))
+    def __rsub__(self, __x: int) -> int:
+        return NoFractionInt(super().__rsub__(__x))
+
+    def __mul__(self, __x: int) -> int:
+        return NoFractionInt(super().__mul__(__x))
+    def __rmul__(self, __x: int) -> int:
+        return NoFractionInt(super().__rmul__(__x))
+
     def __truediv__(self, __x: int) -> int:
         __r = super().__truediv__(__x)
-        if __r.is_integer(): return int(__r)
+        if __r.is_integer(): return NoFractionInt(__r)
         raise DivisionResultNotInteger()
-    
     def __rtruediv__(self, __x: int) -> int:
         __r = super().__rtruediv__(__x)
-        if __r.is_integer(): return int(__r)
+        if __r.is_integer(): return NoFractionInt(__r)
         raise DivisionResultNotInteger()
     
     def instancestr(self) -> str:
@@ -66,10 +80,11 @@ solutions.sort(key=solutionSorter)
 del median, solutionSorter
 
 #select solution
-output_solution = random.choices(solutions, weights=reversed(list(range(len(solutions)))))[0]
+weights = list(reversed(list(range(1, 1+len(solutions)))))
+output_solution = random.choices(solutions, weights=weights)[0]
 
 #output rizzle
 print(end="\n\n")
-print("?".join([str(x) for x in numbers]) + "=" + str(output_solution[0]), end="\n\n")
+print("◦".join([str(x) for x in numbers]) + "=" + str(output_solution[0]), end="\n\n")
 print("".join([str(x) + y for x, y in zip(numbers, output_solution[1])]) + str(numbers[-1]) + "=" + str(output_solution[0]), end="\n\n")
 print(end="\n\n")
