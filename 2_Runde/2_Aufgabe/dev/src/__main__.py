@@ -17,13 +17,8 @@ class NoFractionInt(int):
         if __r.is_integer(): return int(__r)
         raise DivisionResultNotInteger()
     
-    def __repr__(self) -> str:
+    def instancestr(self) -> str:
         return f"{self.__class__.__name__}({super().__repr__()})"
-    
-    def __int__(self) -> int:
-        return super().__int__()
-
-OPERATIONS = ["+", "-", "*", "/"]
 
 #parse arguments
 argparser = argparse.ArgumentParser()
@@ -39,9 +34,9 @@ numbers = [NoFractionInt(random.randint(1, 9)) for i in range(digits)]
 #calculate results for substituting every possible operation combination between "numbers"
 results = []
 operation_lists = []
-for operations in _product(OPERATIONS, repeat=digits - 1):
+for operations in _product(["+", "-", "*", "/"], repeat=digits - 1):
     operations = list(operations)
-    expression = "".join(list(_chain(*list(zip([str(x) for x in numbers], operations))))) + str(numbers[-1])
+    expression = "".join([x.instancestr() + y for x, y in zip(numbers, operations)]) + numbers[-1].instancestr()
     try: result = eval(expression)
     except DivisionResultNotInteger: continue
     if result <= 0: continue
@@ -70,12 +65,11 @@ def solutionSorter(solution):
 solutions.sort(key=solutionSorter)
 del median, solutionSorter
 
-#output solution #TODO make better
-
+#select solution
 output_solution = random.choices(solutions, weights=reversed(list(range(len(solutions)))))[0]
 
-solution_str = f"{''.join(list(_chain(*list(zip([str(x) for x in numbers], output_solution[1])))))}{numbers[-1]}"
-exec(f"calculated_result = int({solution_str})")
-
-print(f"{'?'.join([str(int(x)) for x in numbers])}={output_solution[0]}")
-print(f"{solution_str}={calculated_result}")
+#output rizzle
+print(end="\n\n")
+print("?".join([str(x) for x in numbers]) + "=" + str(output_solution[0]), end="\n\n")
+print("".join([str(x) + y for x, y in zip(numbers, output_solution[1])]) + str(numbers[-1]) + "=" + str(output_solution[0]), end="\n\n")
+print(end="\n\n")
